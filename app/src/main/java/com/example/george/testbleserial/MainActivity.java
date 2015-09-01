@@ -240,8 +240,10 @@ public class MainActivity extends ListActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mLeDeviceListAdapter.addDevice(device);
-                            mLeDeviceListAdapter.notifyDataSetChanged();
+                            if(device.getName().compareTo("SIX15.EYE") ==0) {
+                                mLeDeviceListAdapter.addDevice(device);
+                                mLeDeviceListAdapter.notifyDataSetChanged();
+                            }
                         }
                     });
                 }
