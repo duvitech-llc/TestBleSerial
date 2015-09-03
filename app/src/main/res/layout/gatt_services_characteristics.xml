@@ -67,5 +67,12 @@
     </LinearLayout>
     <ExpandableListView android:id="@+id/gatt_services_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="319dp"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Write"
+        android:id="@+id/btnWrite"
+        android:longClickable="false" />
 </LinearLayout>

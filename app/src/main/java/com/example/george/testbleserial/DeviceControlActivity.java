@@ -20,6 +20,7 @@ package com.example.george.testbleserial;
  */
 
 
+import android.app.Application;
 import android.support.v7.app.AppCompatActivity;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
@@ -35,9 +36,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +62,9 @@ public class DeviceControlActivity extends AppCompatActivity {
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
+
+
+    private Button mButtonWrite;
 
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
@@ -165,6 +171,35 @@ public class DeviceControlActivity extends AppCompatActivity {
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
         mConnectionState = (TextView) findViewById(R.id.connection_state);
         mDataField = (TextView) findViewById(R.id.data_value);
+        mButtonWrite = (Button) findViewById(R.id.btnWrite);
+
+        mButtonWrite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mBluetoothLeService != null){
+                    Toast.makeText(getBaseContext(),"Sending data", Toast.LENGTH_SHORT).show();
+                    BluetoothGattCharacteristic sendDataChar = mGattCharacteristics.get(3).get(2);
+                    if(sendDataChar != null){
+                        byte[] value = new byte[6];
+                        value[0] = 0x05;
+                        value[1] = 0x48;
+                        value[2] = 0x45;
+                        value[3] = 0x4C;
+                        value[4] = 0x4C;
+                        value[5] = 0x4F;
+
+                        sendDataChar.setValue(value);
+                        boolean status = mBluetoothLeService.writeCharacteristic(sendDataChar);
+                        if(!status)
+                            Toast.makeText(getBaseContext(),"Failed to send", Toast.LENGTH_LONG).show();
+
+                    }
+                }
+                else{
+                    Toast.makeText(getBaseContext(),"Disconnected", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         getSupportActionBar().setTitle(mDeviceName);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
