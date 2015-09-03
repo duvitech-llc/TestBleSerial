@@ -180,19 +180,23 @@ public class DeviceControlActivity extends AppCompatActivity {
                     Toast.makeText(getBaseContext(),"Sending data", Toast.LENGTH_SHORT).show();
                     BluetoothGattCharacteristic sendDataChar = mGattCharacteristics.get(3).get(2);
                     if(sendDataChar != null){
-                        byte[] value = new byte[6];
-                        value[0] = 0x05;
-                        value[1] = 0x48;
-                        value[2] = 0x45;
-                        value[3] = 0x4C;
-                        value[4] = 0x4C;
-                        value[5] = 0x4F;
 
-                        sendDataChar.setValue(value);
-                        boolean status = mBluetoothLeService.writeCharacteristic(sendDataChar);
-                        if(!status)
-                            Toast.makeText(getBaseContext(),"Failed to send", Toast.LENGTH_LONG).show();
+                        String cmdText = "dsms \"local\",\"Hello Georgie Porgie\"";
 
+                        SerialProtocol protoHelper = new SerialProtocol(SerialProtocol.FrameTypes.STRING, cmdText.length());
+
+
+                        while(protoHelper.hasNextPacket()) {
+                            sendDataChar.setValue(protoHelper.getNextPacket(cmdText.getBytes()));
+                            boolean status = mBluetoothLeService.writeCharacteristic(sendDataChar);
+                            if (!status)
+                                Toast.makeText(getBaseContext(), "Failed to send", Toast.LENGTH_LONG).show();
+                            try {
+                                Thread.sleep(100);
+                            }catch(Exception ex){
+
+                            }
+                        }
                     }
                 }
                 else{
