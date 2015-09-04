@@ -177,11 +177,10 @@ public class DeviceControlActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(mBluetoothLeService != null){
-                    Toast.makeText(getBaseContext(),"Sending data", Toast.LENGTH_SHORT).show();
                     BluetoothGattCharacteristic sendDataChar = mGattCharacteristics.get(3).get(2);
                     if(sendDataChar != null){
 
-                        String cmdText = "dsms \"local\",\"Hello Georgie Porgie\"";
+                        String cmdText = "dsms \"local\",\"Hello Georgie Porgie, this is a very very vary long variation of the things we may see\"";
 
                         SerialProtocol protoHelper = new SerialProtocol(SerialProtocol.FrameTypes.STRING, cmdText.length());
 

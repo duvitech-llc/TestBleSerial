@@ -183,23 +183,44 @@ public class SerialProtocol {
 
         // data type
         startPacket.put(1,(byte)0xAB);
-        if (mData_type == FrameTypes.ACKNOWLEDGE) {
-            startPacket.put(2,(byte)0xA5);
-        }
-        else if (mData_type == FrameTypes.STRING)
-        {
-            startPacket.put(2,(byte)0xAD);
-        }
-        else
-        {
-            startPacket.put(2,(byte)0xDA);
-        }
+        switch(mData_type){
+            case ACKNOWLEDGE:
+                startPacket.put(2,(byte)0xA5);
+                // use different data for ack
+                // frame Id
+                startPacket.put(3, (byte) 0xCC);
+                startPacket.put(4,(byte)0xCC);
+                startPacket.put(5,(byte)0xBB);
+                startPacket.put(6, (byte) 0xBB);
+                // data length
+                startPacket.putInt(7, (int) mData_len);
 
-        // frame Id
-        startPacket.put(3, (byte) 0xCC);
-        startPacket.put(4,(byte)0xCC);
-        startPacket.put(5,(byte)0xBB);
-        startPacket.put(6, (byte) 0xBB);
+                // total packets 11
+                startPacket.putShort(11, (short) mTotal_packets);
+
+                // timeout  13
+                startPacket.putChar(13, mTimeout);
+
+                // config  14
+                startPacket.putChar(14, mReg_Config);
+
+                // reserved  15
+                startPacket.put(15, (byte) 0x00);
+
+                // crc 16
+                startPacket.putInt(16, (int)mData_crc);
+
+                return startPacket.array();
+            case STRING:
+                startPacket.put(2,(byte)0xAD);
+
+            case BINARY:
+                startPacket.put(2,(byte)0xDA);
+
+                break;
+            default:
+                break;
+        }
 
         // data length
         startPacket.putInt(7, (int) mData_len);
